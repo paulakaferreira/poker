@@ -2,6 +2,7 @@ package poker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class CardGame {
 
@@ -52,6 +53,7 @@ public class CardGame {
 
     public class Deck {
         private List<Card> cards;
+        private Random random;
 
         public Deck() {
             cards = new ArrayList<>();
@@ -61,11 +63,17 @@ public class CardGame {
                     cards.add(card);
                 }
             }
+            random = new Random();
         }
 
         public void shuffle() {
-            // Implementation of shuffling algorithm
-            // ...
+            int n = cards.size();
+            for (int i = n - 1; i > 0; i--) {
+                int j = random.nextInt(i + 1);
+                Card temp = cards.get(i);
+                cards.set(i, cards.get(j));
+                cards.set(j, temp);
+            }
         }
 
         public Card drawCard() {

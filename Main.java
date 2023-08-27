@@ -7,9 +7,12 @@ public class Main {
         CardGame game = new CardGame();
         Deck deck = game.new Deck();
 
-        // deck.shuffle();
+        deck.shuffle();
 
         System.out.println("Deck:");
+        System.out.println(deck);
+
+        System.out.println("Shuffled Deck:");
         System.out.println(deck);
 
         Card drawnCard = deck.drawCard();
