@@ -1,4 +1,6 @@
 
+import java.util.List;
+
 import poker.CardGame;
 import poker.CardGame.*;
 import poker.Player;
@@ -34,6 +36,19 @@ public class Main {
         System.out.println(player2);
         System.out.println(player3);
         System.out.println(player4);
+
+        List<CardGame.Card> flop = deck.dealFlop();
+        System.out.println("Flop:");
+        deck.printFlop(flop);
+
+        CardGame.Card turn = deck.dealTurn();
+        System.out.println("Turn:");
+        System.out.println(turn);
+
+        CardGame.Card river = deck.dealRiver();
+        System.out.println("River:");
+        System.out.println(river);
+
 
     }
 }

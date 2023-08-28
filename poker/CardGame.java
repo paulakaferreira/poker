@@ -54,9 +54,13 @@ public class CardGame {
     public class Deck {
         private List<Card> cards;
         private Random random;
+        private List<Card> flop;
+        private Card turn;
+        private Card river;
 
         public Deck() {
             cards = new ArrayList<>();
+            flop = new ArrayList<>();
             for (Suit suit : Suit.values()) {
                 for (Rank rank : Rank.values()) {
                     Card card = new Card(suit, rank);
@@ -81,6 +85,29 @@ public class CardGame {
                 throw new IllegalStateException("No more cards in the deck.");
             }
             return cards.remove(cards.size() - 1);
+        }
+
+        public List<Card> dealFlop() {
+            for (int i = 0; i < 3; i++) {
+                flop.add(drawCard());
+            }
+            return flop;
+        }
+
+        public void printFlop(List<Card> flop) {
+            for (Card card : flop) {
+                System.out.println(card);
+            }
+        }
+
+        public Card dealTurn() {
+            turn = cards.remove(cards.size() - 1);
+            return turn;
+        }
+
+        public Card dealRiver() {
+            river = cards.remove(cards.size() - 1);
+            return river;
         }
 
         public String toString() {
