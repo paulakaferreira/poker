@@ -93,8 +93,8 @@ public class Player {
         for (CardGame.Card card : hand) {
             sb.append(card).append("\n");
         }
-        sb.append("Chips: ").append(chips);
         sb.append("\n");
+        sb.append("Total of chips: ").append(chips);
         return sb.toString();
     }
 }
