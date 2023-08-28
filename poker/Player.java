@@ -27,6 +27,10 @@ public class Player {
         return chips;
     }
 
+    public int removeChips(int amount){
+        return this.chips -= amount;
+    }
+
     public void addToHand(CardGame.Card card) {
         hand.add(card);
     }
@@ -48,8 +52,8 @@ public class Player {
     }
 
     public int dealBigBlind() {
-        if (chips >= 10) {
-            chips -= 10;
+        if (this.chips >= 10) {
+            this.chips -= 10;
             return 10;
         } else {
             // Handle case when player doesn't have enough chips for big blind
@@ -67,8 +71,8 @@ public class Player {
     }
 
     public int dealSmallBlind() {
-        if (chips >= 5) {
-            chips -= 5;
+        if (this.chips >= 5) {
+            this.chips -= 5;
             setSmallBlind(true);
             return 5;
         } else {

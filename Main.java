@@ -14,6 +14,8 @@ public class Main {
         CardGame game = new CardGame();
         Deck deck = game.new Deck();
         PokerGame pokerGame = new PokerGame();
+        int dealer_turn = 1;
+        int pot = 0;
 
         deck.shuffle();
 
@@ -21,7 +23,7 @@ public class Main {
 
         List<Player> players = new ArrayList<>();
 
-        System.out.print("Welcome to MIMO Texa's Hold'em Game !");
+        System.out.print("Welcome to MIMO Texa's Hold'em Game!");
         System.out.println();
 
         // Prompt the user for their name
@@ -48,9 +50,8 @@ public class Main {
         player4.addToHand(deck.drawCard());
         player4.addToHand(deck.drawCard());
 
-        System.out.println("\n");
         System.out.println("----------------------------------");
-        System.out.print("The cards have been distributed !");
+        System.out.print("The cards have been shuffled and distributed!");
         System.out.println("\n");
         System.out.println(you);
 
@@ -92,43 +93,61 @@ public class Main {
         //System.out.println("\n");
 
         System.out.println("----------------------------------");
-        System.out.print("Here are the roles for this round:");
-        System.out.println();
+        System.out.println("BETTING ROUND 1 - PRE-FLOP");
+        System.out.println("----------------------------------");
 
-        for (Player player : players) {
-            if (player.isDealer() == true) {
-                System.out.println("Dealer: " + player.getName());
+        role.printRole(players);
+        int small_blind = role.printSmallBlind(players);
+        pot += small_blind;
+        int big_blind = role.printBigBlind(players);
+        pot += big_blind;
+        Player dealer = role.getDealer(players);
+
+        for (Player player : role.getRemainingPlayers((players))) {
+            if (player == you) {
+                role.menu();
+                System.out.print("Please choose your action: ");
+                String chosen_action = scanner.nextLine();
+                if (chosen_action.equals("1")) {
+                    int call = role.call(you, big_blind);
+                    pot += call;
+                }
+            } else {
+                int call = role.call(player, big_blind);
+                pot += call;
             }
-            if (player.isSmallBlind() == true) {
-                System.out.println("Small Blind: " + player.getName());
+        }
+
+        if (you.isSmallBlind()) {
+            System.out.println("You were the Small Blind for this round.");
+            System.out.println("Do you wish to complete your bet ?");
+            System.out.println("1 - Yes");
+            System.out.println("2 - Fold (quit round)");
+            System.out.print("Your answer: ");
+            String small_chosen_action = null;
+            small_chosen_action = scanner.nextLine();
+            if (small_chosen_action.equals("1")) {
+                int complete_small_blind = role.printSmallBlindCompletion(you);
+                pot += complete_small_blind;
             }
-            if (player.isBigBlind() == true) {
-                System.out.println("Big Blind: " + player.getName());
+        } else {
+            for (Player player : players) {
+                if (player.isSmallBlind()) {
+                    int complete_small_blind = role.printSmallBlindCompletion(player);
+                    pot += complete_small_blind;
+                }
             }
         }
 
         System.out.println("----------------------------------");
-        System.out.print("The Small Blind places its bet: ");
-
-        for (Player player : players) {
-            if (player.isSmallBlind() == true) {
-                int small_blind = player.dealSmallBlind();
-                System.out.println();
-                System.out.println(player.getName() + " deals " + small_blind);
-            }
-        }
+        System.out.println("End of first round.");
+        System.out.println("Total amount on the table: " + pot);
+        System.out.println("----------------------------------");
 
         System.out.println("----------------------------------");
-        System.out.print("The Big Blind places its bet: ");
-
-        for (Player player : players) {
-            if (player.isBigBlind() == true) {
-                int big_blind = player.dealBigBlind();
-                System.out.println();
-                System.out.println(player.getName() + " deals " + big_blind);
-            }
-        }
-
+        System.out.println("FLOP");
+        System.out.println("----------------------------------");
+  
         scanner.close();
     }
 }
