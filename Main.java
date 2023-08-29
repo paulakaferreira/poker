@@ -1,7 +1,9 @@
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import poker.CardGame;
 import poker.CardGame.*;
@@ -9,7 +11,24 @@ import poker.Player;
 import poker.PokerGame;
 import poker.PokerGame.*;
 
+
 public class Main {
+
+    // Créer une liste de joueurs en fonction de la difficulté
+    public static List<Player> createPlayers(String difficulty, String playerName) {
+        List<Player> players = new ArrayList<>();
+        List<String> possiblePlayers = Arrays.asList("Florian", "Charles", "Nadine", "Poornima", "Lucas", "Gabriel", "Solene", "Louis", "Chloe");
+        Collections.shuffle(possiblePlayers);
+
+        int numberOfPlayers = difficulty.equalsIgnoreCase("easy") ? 3 :
+                difficulty.equalsIgnoreCase("medium") ? 6 :
+                        10; // difficult
+
+        players.add(new Player(playerName));
+        players.addAll(possiblePlayers.subList(0, numberOfPlayers - 1).stream().map(Player::new).collect(Collectors.toList()));
+        return players;
+    }
+
     public static void main(String[] args) {
         CardGame game = new CardGame();
         Deck deck = game.new Deck();
@@ -20,77 +39,40 @@ public class Main {
         deck.shuffle();
 
         Scanner scanner = new Scanner(System.in);
-
-        List<Player> players = new ArrayList<>();
+        List<Player> players;
 
         System.out.print("Welcome to MIMO Texa's Hold'em Game!");
         System.out.println();
 
-        // Prompt the user for their name
         System.out.print("Please enter your name to start: ");
         String playerName = scanner.nextLine();
 
-        // Creates players list
-        Player you = new Player(playerName);;
-        Player player2 = new Player("Player 2");
-        Player player3 = new Player("Player 3");
-        Player player4 = new Player("Player 4");
-        players.add(you);
-        players.add(player2);
-        players.add(player3);
-        players.add(player4);
+        System.out.print("Choose difficulty (easy, medium, hard): ");
+        String difficulty = scanner.nextLine();
+
+        players = createPlayers(difficulty, playerName);
 
         // Add cards to players' hands
-        you.addToHand(deck.drawCard());
-        you.addToHand(deck.drawCard());
-        player2.addToHand(deck.drawCard());
-        player2.addToHand(deck.drawCard());
-        player3.addToHand(deck.drawCard());
-        player3.addToHand(deck.drawCard());
-        player4.addToHand(deck.drawCard());
-        player4.addToHand(deck.drawCard());
+        for (Player player : players) {
+            player.addToHand(deck.drawCard());
+            player.addToHand(deck.drawCard());
+        }
 
         System.out.println("----------------------------------");
-        System.out.print("The cards have been shuffled and distributed!");
-        System.out.println("\n");
-        System.out.println(you);
+        System.out.println("The cards have been shuffled and distributed!");
+        System.out.println();
+
+        Player you = players.stream()
+                .filter(player -> playerName.equals(player.getName()))
+                .findFirst()
+                .orElse(null);
+
+        if (you != null) {
+            System.out.println(you);
+        }
 
         // Sets each player's roles
         Role role = pokerGame.new Role(players);
-
-        
-        //List<CardGame.Card> flop = deck.dealFlop();
-        //System.out.println("Flop:");
-        //deck.printFlop(flop);
-        //System.out.println("\n");
-
-        //CardGame.Card turn = deck.dealTurn();
-        //System.out.println("Turn:");
-        //System.out.println(turn);
-        //System.out.println("\n");
-
-        //CardGame.Card river = deck.dealRiver();
-        //System.out.println("River:");
-        //System.out.println(river);
-        //System.out.println("\n");
-
-        //System.out.println(you.isBigBlind());
-        //System.out.println(player2.isBigBlind());
-        //System.out.println(player3.isBigBlind());
-        //System.out.println(player4.isBigBlind());
-        //System.out.println("\n");
-
-        //System.out.println(you.isSmallBlind());
-        //System.out.println(player2.isSmallBlind());
-        //System.out.println(player3.isSmallBlind());
-        //System.out.println(player4.isSmallBlind());
-        //System.out.println("\n");
-
-        //System.out.println(you.isDealer());
-        //System.out.println(player2.isDealer());
-        //System.out.println(player3.isDealer());
-        //System.out.println(player4.isDealer());
-        //System.out.println("\n");
 
         System.out.println("----------------------------------");
         System.out.println("BETTING ROUND 1 - PRE-FLOP");
@@ -103,7 +85,7 @@ public class Main {
         pot += big_blind;
         Player dealer = role.getDealer(players);
 
-        for (Player player : role.getRemainingPlayers((players))) {
+        for (Player player : role.getRemainingPlayers(players)) {
             if (player == you) {
                 role.menu();
                 System.out.print("Please choose your action: ");
@@ -118,14 +100,13 @@ public class Main {
             }
         }
 
-        if (you.isSmallBlind()) {
+        if (you != null && you.isSmallBlind()) {
             System.out.println("You were the Small Blind for this round.");
-            System.out.println("Do you wish to complete your bet ?");
+            System.out.println("Do you wish to complete your bet?");
             System.out.println("1 - Yes");
             System.out.println("2 - Fold (quit round)");
             System.out.print("Your answer: ");
-            String small_chosen_action = null;
-            small_chosen_action = scanner.nextLine();
+            String small_chosen_action = scanner.nextLine();
             if (small_chosen_action.equals("1")) {
                 int complete_small_blind = role.printSmallBlindCompletion(you);
                 pot += complete_small_blind;
@@ -144,10 +125,98 @@ public class Main {
         System.out.println("Total amount on the table: " + pot);
         System.out.println("----------------------------------");
 
+        // Second round starts here
         System.out.println("----------------------------------");
-        System.out.println("FLOP");
+        System.out.println("BETTING ROUND 2 - FLOP");
         System.out.println("----------------------------------");
-  
+        role.rotateRoles(players);
+        role.printRole(players);
+
+        // Distribute the flop cards
+        Card flop1 = deck.drawCard();
+        Card flop2 = deck.drawCard();
+        Card flop3 = deck.drawCard();
+        System.out.println("Flop Cards: " + flop1 + ", " + flop2 + ", " + flop3);
+
+        // Betting starts again but this time without small and big blinds
+        for (Player player : players) {
+            if (player == you) {
+                role.menu();
+                System.out.print("Please choose your action: ");
+                String chosen_action = scanner.nextLine();
+                // Implement your logic for 'Call', 'Raise', and 'Fold'
+            } else {
+                // AI logic for other players can go here
+            }
+        }
+
+        // Code for any follow-up actions in the Flop round would go here
+
+        System.out.println("----------------------------------");
+        System.out.println("End of second round.");
+        System.out.println("Total amount on the table: " + pot);
+        System.out.println("----------------------------------");
+
+        System.out.println("----------------------------------");
+        System.out.println("BETTING ROUND 3 - TURN");
+        System.out.println("----------------------------------");
+
+        role.rotateRoles(players);
+        role.printRole(players);
+
+        // Distribute the flop cards
+        Card flop4 = deck.drawCard();
+        System.out.println("Flop Cards: " + flop1 + ", " + flop2 + ", " + flop3 + ",  "+ flop4);
+
+        // Betting starts again but this time without small and big blinds
+        for (Player player : players) {
+            if (player == you) {
+                role.menu();
+                System.out.print("Please choose your action: ");
+                String chosen_action = scanner.nextLine();
+                // Implement your logic for 'Call', 'Raise', and 'Fold'
+            } else {
+                // AI logic for other players can go here
+            }
+        }
+
+
+        System.out.println("----------------------------------");
+        System.out.println("End of third round.");
+        System.out.println("Total amount on the table: " + pot);
+        System.out.println("----------------------------------");
+
+        // Le quatrième tour commence ici
+        System.out.println("----------------------------------");
+        System.out.println("BETTING ROUND 4 - RIVER");
+        System.out.println("----------------------------------");
+        role.rotateRoles(players);
+        role.printRole(players);
+
+        for (Player player : role.getRemainingPlayers(players)) {
+            if (player == you) {
+                role.menu();
+                System.out.print("Please choose your action: ");
+                String chosen_action = scanner.nextLine();
+                if (chosen_action.equals("1")) {
+                    int call = role.call(you, big_blind);  // Remarque: vous voudrez peut-être ajuster la valeur du big_blind
+                    pot += call;
+                }
+                // Ajoutez d'autres options ici comme "raise", "fold", etc.
+            } else {
+                int call = role.call(player, big_blind);  // Remarque: vous voudrez peut-être ajuster la valeur du big_blind
+                pot += call;
+            }
+        }
+
+        System.out.println("----------------------------------");
+        System.out.println("End of fourth round.");
+        System.out.println("Total amount on the table: " + pot);
+        System.out.println("----------------------------------");
+        // reste révéler les cartes et déterminer le gagnant.
+
+
+        // Close the scanner to prevent resource leak
         scanner.close();
     }
 }
