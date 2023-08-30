@@ -14,7 +14,7 @@ import poker.PokerGame.*;
 
 public class Main {
 
-    // Créer une liste de joueurs en fonction de la difficulté
+    // Creates list of players depending on the dificulty level
     public static List<Player> createPlayers(String difficulty, String playerName) {
         List<Player> players = new ArrayList<>();
         List<String> possiblePlayers = Arrays.asList("Florian", "Charles", "Nadine", "Poornima", "Lucas", "Gabriel", "Solene", "Louis", "Chloe");
@@ -84,6 +84,8 @@ public class Main {
         int big_blind = role.printBigBlind(players);
         pot += big_blind;
         Player dealer = role.getDealer(players);
+        int raise = 0;
+        int int_raise = 0;
 
         for (Player player : role.getRemainingPlayers(players)) {
             if (player == you) {
@@ -98,8 +100,14 @@ public class Main {
                     System.out.println("Your total number of chips is: " + you.getChips());
                     System.out.print("Please indicate the amount you wish to raise: ");
                     String chosen_raise = scanner.nextLine();
-                    int int_raise = Integer.parseInt(chosen_raise);
+                    int_raise = Integer.parseInt(chosen_raise);
+                    int min_raise = big_blind * 2; // Minimum raise is double the big blind
+                    if (int_raise < min_raise) {
+                        System.out.println("You need to raise at least " + min_raise);
+                        continue; // Repeat the loop to allow the player to choose again
+                    }
                     int your_raise = role.raise(you, big_blind, int_raise);
+                    raise = 1;
                     pot += your_raise;
                 } else if (chosen_action.equals("3")) {
                     role.fold(players, you);
@@ -111,8 +119,9 @@ public class Main {
         }
 
         if (you != null && you.isSmallBlind()) {
+            System.out.println("----------------------------------");
             System.out.println("You were the Small Blind for this round.");
-            System.out.println("Do you wish to complete your bet?");
+            System.out.println("Do you wish to complete your bet and stay in the game?");
             System.out.println("1 - Yes");
             System.out.println("2 - Fold (quit round)");
             System.out.print("Your answer: ");
@@ -120,7 +129,7 @@ public class Main {
             if (small_chosen_action.equals("1")) {
                 int complete_small_blind = role.printSmallBlindCompletion(you);
                 pot += complete_small_blind;
-            } else if (small_chosen_action.equals("1")) {
+            } else if (small_chosen_action.equals("2")) {
                 role.fold(players, you);
             }
         } else {
@@ -130,6 +139,17 @@ public class Main {
                     pot += complete_small_blind;
                 }
             }
+        }
+
+        // Continues the game if player 'you' decided to raise
+        if (raise == 1) {
+            for (Player player : players) {
+                if (player != you) {
+                    int call = role.call(player, int_raise);
+                    pot += call;
+                }
+            }
+            raise = 0;
         }
 
         System.out.println("----------------------------------");
@@ -152,26 +172,57 @@ public class Main {
             System.out.println(you);
         }
 
-        // Betting starts again but this time without small and big blinds
-        for (Player player : players) {
-            if (player == dealer) {
-                int call = role.call(player, 25);
-                pot += call;               
-            } else if (player == you) {
+        // Betting starts again but this time starting with the dealer
+        int dealerIndex = players.indexOf(dealer);
+
+        for (int i = dealerIndex; i < players.size() + dealerIndex; i++) {
+            Player currentPlayer = players.get(i % players.size());
+        
+            if (currentPlayer == you) {
                 role.menu();
                 System.out.print("Please choose your action: ");
                 String chosen_action = scanner.nextLine();
+                if (chosen_action.equals("1")) {
+                    int call = role.call(you, 25);
+                    pot += call;
+                } else if (chosen_action.equals("2")) {
+                    System.out.println("You have decided to raise the amount on the table!");
+                    System.out.println("Your total number of chips is: " + you.getChips());
+                    System.out.print("Please indicate the amount you wish to raise: ");
+                    String chosen_raise = scanner.nextLine();
+                    int_raise = Integer.parseInt(chosen_raise);
+                    int min_raise = big_blind * 2; // Minimum raise is double the big blind
+                    if (int_raise < min_raise) {
+                        System.out.println("You need to raise at least " + min_raise);
+                        continue; // Repeat the loop to allow the player to choose again
+                    }
+                    int your_raise = role.raise(you, 25, int_raise);
+                    raise = 1;
+                    pot += your_raise;
+                } else if (chosen_action.equals("3")) {
+                    role.fold(players, you);
+                }
             } else {
-                int call = role.call(player, 25);
+                int call = role.call(currentPlayer, 25);
                 pot += call; 
             }
         }
 
+        // Continues the game if player 'you' decided to raise
+        if (raise == 1) {
+            for (Player player : players) {
+                if (player != you) {
+                    int call = role.call(player, int_raise);
+                    pot += call;
+                }
+            }
+            raise = 0;
+        }
 
         System.out.println("----------------------------------");
         System.out.println("End of second round.");
         System.out.println("Total amount on the table: " + pot);
-        System.out.println("----------------------------------");
+
 
         System.out.println("----------------------------------");
         System.out.println("BETTING ROUND 3 - TURN");
@@ -182,51 +233,120 @@ public class Main {
         Card flop4 = deck.drawCard();
         System.out.println("Flopped Cards: " + flop1 + ", " + flop2 + ", " + flop3 + ",  "+ flop4);
 
-        // Betting starts again but this time without small and big blinds
-        for (Player player : players) {
-            if (player == you) {
+        // Betting starts again but this time starting from the person after the dealer
+        for (int i = (dealerIndex + 2) % players.size(); i < players.size() + dealerIndex; i++) {
+            Player currentPlayer = players.get(i % players.size());
+        
+            if (currentPlayer == you) {
                 role.menu();
                 System.out.print("Please choose your action: ");
                 String chosen_action = scanner.nextLine();
-                // Implement your logic for 'Call', 'Raise', and 'Fold'
+                if (chosen_action.equals("1")) {
+                    int call = role.call(you, 25);
+                    pot += call;
+                } else if (chosen_action.equals("2")) {
+                    System.out.println("You have decided to raise the amount on the table!");
+                    System.out.println("Your total number of chips is: " + you.getChips());
+                    System.out.print("Please indicate the amount you wish to raise: ");
+                    String chosen_raise = scanner.nextLine();
+                    int_raise = Integer.parseInt(chosen_raise);
+                    int min_raise = big_blind * 2; // Minimum raise is double the big blind
+                    if (int_raise < min_raise) {
+                        System.out.println("You need to raise at least " + min_raise);
+                        continue; // Repeat the loop to allow the player to choose again
+                    }
+                    int your_raise = role.raise(you, 25, int_raise);
+                    raise = 1;
+                    pot += your_raise;
+                } else if (chosen_action.equals("3")) {
+                    role.fold(players, you);
+                }
             } else {
-                
+                int call = role.call(currentPlayer, 25);
+                pot += call;
             }
+        }
+
+        // Continues the game if player 'you' decided to raise
+        if (raise == 1) {
+            for (Player player : players) {
+                if (player != you) {
+                    int call = role.call(player, int_raise);
+                    pot += call;
+                }
+            }
+            raise = 0;
         }
 
 
         System.out.println("----------------------------------");
         System.out.println("End of third round.");
         System.out.println("Total amount on the table: " + pot);
-        System.out.println("----------------------------------");
 
-        // Le quatrième tour commence ici
+
         System.out.println("----------------------------------");
         System.out.println("BETTING ROUND 4 - RIVER");
         System.out.println("----------------------------------");
-        role.rotateRoles(players);
-        role.printRole(players);
 
-        for (Player player : role.getRemainingPlayers(players)) {
-            if (player == you) {
+
+        for (int i = (dealerIndex + 3) % players.size(); i < players.size() + dealerIndex; i++) {
+            Player currentPlayer = players.get(i % players.size());
+        
+            if (currentPlayer == you) {
                 role.menu();
                 System.out.print("Please choose your action: ");
                 String chosen_action = scanner.nextLine();
                 if (chosen_action.equals("1")) {
-                    int call = role.call(you, big_blind);  
+                    int call = role.call(you, 25);
                     pot += call;
+                } else if (chosen_action.equals("2")) {
+                    System.out.println("You have decided to raise the amount on the table!");
+                    System.out.println("Your total number of chips is: " + you.getChips());
+                    System.out.print("Please indicate the amount you wish to raise: ");
+                    String chosen_raise = scanner.nextLine();
+                    int_raise = Integer.parseInt(chosen_raise);
+                    int min_raise = big_blind * 2; // Minimum raise is double the big blind
+                    if (int_raise < min_raise) {
+                        System.out.println("You need to raise at least " + min_raise);
+                        continue; // Repeat the loop to allow the player to choose again
+                    }
+                    int your_raise = role.raise(you, 25, int_raise);
+                    raise = 1;
+                    pot += your_raise;
+                } else if (chosen_action.equals("3")) {
+                    role.fold(players, you);
                 }
-                
             } else {
-                int call = role.call(player, big_blind);  
+                int call = role.call(currentPlayer, 25);
                 pot += call;
             }
+        }
+
+        // Continues the game if player 'you' decided to raise
+        if (raise == 1) {
+            for (Player player : players) {
+                if (player != you) {
+                    int call = role.call(player, int_raise);
+                    pot += call;
+                }
+            }
+            raise = 0;
         }
 
         System.out.println("----------------------------------");
         System.out.println("End of fourth round.");
         System.out.println("Total amount on the table: " + pot);
+
+
         System.out.println("----------------------------------");
+        System.out.println("TIME FOR THE SHOWNDOWN");
+        System.out.println("");
+
+
+        for (Player player : players) {
+            System.out.println(player);
+        }
+
  
         scanner.close();
     }

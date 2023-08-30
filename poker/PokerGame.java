@@ -161,8 +161,8 @@ public class PokerGame {
         public void fold(List<Player> players, Player player) {
             players.remove(player);
             System.out.println("----------------------------------");
-            System.out.print(player.getName() + " has decided to fold");
-            System.out.print(player.getName() + " has been removed from this round");
+            System.out.println(player.getName() + " has decided to fold");
+            System.out.println(player.getName() + " has been removed from this round");
         }
 
         public int raise(Player player, int amount, int amount_raised) {
@@ -171,8 +171,8 @@ public class PokerGame {
                 player.removeChips(amount);
                 System.out.println("----------------------------------");
                 System.out.println(player.getName() + " decided to 'Raise' ");
-                System.out.println(player.getName() + " deals " + amount + "to  even the bet");
-                System.out.println(player.getName() + " deals " + amount_raised + "to raise the bet");
+                System.out.println(player.getName() + " deals " + amount + " to  even the bet");
+                System.out.println(player.getName() + " deals " + amount_raised + " to raise the bet");
                 System.out.println("Total amount dealt: " + total_amount);
                 return amount + amount_raised;
             } else {
