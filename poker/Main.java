@@ -29,6 +29,29 @@ public class Main {
         return players;
     }
 
+    static class HandRankAndPlayerIndex implements Comparable<HandRankAndPlayerIndex> {
+        private HandEval.HandRank handRank;
+        private int playerIndex;
+
+        public HandRankAndPlayerIndex(HandEval.HandRank handRank, int playerIndex) {
+            this.handRank = handRank;
+            this.playerIndex = playerIndex;
+        }
+
+        public HandEval.HandRank getHandRank() {
+            return handRank;
+        }
+
+        public int getPlayerIndex() {
+            return playerIndex;
+        }
+
+        @Override
+        public int compareTo(HandRankAndPlayerIndex other) {
+            return other.handRank.compareTo(handRank);
+        }
+    }
+
     public static void main(String[] args) {
         CardGame game = new CardGame();
         Deck deck = game.new Deck();
@@ -347,7 +370,56 @@ public class Main {
             System.out.println(player);
         }
 
- 
+        List<Card> communityCards = new ArrayList<>();
+
+        communityCards.add(flop1);
+        communityCards.add(flop2);
+        communityCards.add(flop2);
+        communityCards.add(flop3);
+        communityCards.add(flop4);
+
+        for (Player player : players) {
+            for (Card card : communityCards) {
+                player.addToHand(card);
+            }
+        }
+
+        // Create a list to hold evaluated hands and player indexes
+        List<HandRankAndPlayerIndex> evaluatedHands = new ArrayList<>();
+
+        // Loop through players and evaluate their hands
+        for (int i = 0; i < players.size(); i++) {
+            Player player = players.get(i);
+            List<Card> playerHand = player.getHand();  // Get the player's hole cards + community cards
+            HandEval.HandRank handRank = HandEval.evaluateHand(playerHand);
+            evaluatedHands.add(new HandRankAndPlayerIndex(handRank, i));
+        }
+
+        // Sort the evaluated hands list in descending order of hand rank
+        Collections.sort(evaluatedHands);
+
+        // Get the highest ranked hand
+        HandEval.HandRank highestRank = evaluatedHands.get(0).getHandRank();
+
+        // Find the players with the highest ranked hand
+        List<Player> winners = new ArrayList<>();
+        for (HandRankAndPlayerIndex evaluatedHand : evaluatedHands) {
+            if (evaluatedHand.getHandRank() == highestRank) {
+                winners.add(players.get(evaluatedHand.getPlayerIndex()));
+            }
+        }
+
+        // Determine the winner(s)
+        if (winners.size() == 1) {
+            Player winner = winners.get(0);
+            System.out.println("The winner is: " + winner.getName());
+        } else {
+            System.out.println("It's a tie between the following players:");
+            for (Player winner : winners) {
+                System.out.println(winner.getName());
+            }
+        }
+
         scanner.close();
     }
 }
