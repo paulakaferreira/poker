@@ -67,43 +67,43 @@ public class CardGame {
 
             switch (rank) {
                 case TWO:
-                    rankEmoji = "2️⃣";
+                    rankEmoji = "2";
                     break;
                 case THREE:
-                    rankEmoji = "3️⃣";
+                    rankEmoji = "3";
                     break;
                 case FOUR:
-                    rankEmoji = "4️⃣";
+                    rankEmoji = "4";
                     break;
                 case FIVE:
-                    rankEmoji = "5️⃣";
+                    rankEmoji = "5";
                     break;
                 case SIX:
-                    rankEmoji = "6️⃣";
+                    rankEmoji = "6";
                     break;
                 case SEVEN:
-                    rankEmoji = "7️⃣";
+                    rankEmoji = "7";
                     break;
                 case EIGHT:
-                    rankEmoji = "8️⃣";
+                    rankEmoji = "8";
                     break;
                 case NINE:
-                    rankEmoji = "9️⃣";
+                    rankEmoji = "9";
                     break;
                 case TEN:
-                    rankEmoji = "🔟";
+                    rankEmoji = "10";
                     break;
                 case JACK:
-                    rankEmoji = "🇯";
+                    rankEmoji = "J";
                     break;
                 case QUEEN:
-                    rankEmoji = "🇶";
+                    rankEmoji = "Q";
                     break;
                 case KING:
-                    rankEmoji = "🇰";
+                    rankEmoji = "K";
                     break;
                 case ACE:
-                    rankEmoji = "🅰️";
+                    rankEmoji = "A";
                     break;
             }
 

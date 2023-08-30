@@ -165,10 +165,16 @@ public class PokerGame {
             System.out.print(player.getName() + " has been removed from this round");
         }
 
-        public int raise(Player player, int amount) {
-            if (amount <= player.getChips()) {
+        public int raise(Player player, int amount, int amount_raised) {
+            int total_amount = amount + amount_raised;
+            if (total_amount <= player.getChips()) {
                 player.removeChips(amount);
-                return amount;
+                System.out.println("----------------------------------");
+                System.out.println(player.getName() + " decided to 'Raise' ");
+                System.out.println(player.getName() + " deals " + amount + "to  even the bet");
+                System.out.println(player.getName() + " deals " + amount_raised + "to raise the bet");
+                System.out.println("Total amount dealt: " + total_amount);
+                return amount + amount_raised;
             } else {
                 System.out.println(player.getName() + " doesn't have enough chips to raise.");
                 return 0;
