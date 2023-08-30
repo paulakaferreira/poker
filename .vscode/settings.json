@@ -1,5 +1,7 @@
 {
     "java.project.sourcePaths": [
         "."
-    ]
+    ],
+    "editor.fontFamily": "Consolas, 'Courier New'",
+    "terminal.integrated.fontFamily": "Consolas, 'Courier New'",
 }
