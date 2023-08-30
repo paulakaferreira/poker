@@ -47,8 +47,69 @@ public class CardGame {
         }
 
         public String toString() {
-            return rank + " of " + suit;
+            String suitEmoji = "";
+            String rankEmoji = "";
+
+            switch (suit) {
+                case CLUBS:
+                    suitEmoji = "♣️";
+                    break;
+                case DIAMONDS:
+                    suitEmoji = "♦️";
+                    break;
+                case HEARTS:
+                    suitEmoji = "♥️";
+                    break;
+                case SPADES:
+                    suitEmoji = "♠️";
+                    break;
+            }
+
+            switch (rank) {
+                case TWO:
+                    rankEmoji = "2️⃣";
+                    break;
+                case THREE:
+                    rankEmoji = "3️⃣";
+                    break;
+                case FOUR:
+                    rankEmoji = "4️⃣";
+                    break;
+                case FIVE:
+                    rankEmoji = "5️⃣";
+                    break;
+                case SIX:
+                    rankEmoji = "6️⃣";
+                    break;
+                case SEVEN:
+                    rankEmoji = "7️⃣";
+                    break;
+                case EIGHT:
+                    rankEmoji = "8️⃣";
+                    break;
+                case NINE:
+                    rankEmoji = "9️⃣";
+                    break;
+                case TEN:
+                    rankEmoji = "🔟";
+                    break;
+                case JACK:
+                    rankEmoji = "🇯";
+                    break;
+                case QUEEN:
+                    rankEmoji = "🇶";
+                    break;
+                case KING:
+                    rankEmoji = "🇰";
+                    break;
+                case ACE:
+                    rankEmoji = "🅰️";
+                    break;
+            }
+
+            return rankEmoji + suitEmoji;
         }
+
     }
 
     public class Deck {

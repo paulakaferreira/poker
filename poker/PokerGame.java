@@ -4,27 +4,81 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PokerGame {
-    
+
     public class Role {
-
         public Role(List<Player> players) {
+            // Validate the list of players
+            if (players == null || players.size() < 3 || players.size() > 10) {
+                throw new IllegalArgumentException("Invalid number of players. Must be between 3 and 10.");
+            }
 
-            // Randomly choose the dealer, small blind, and big blind
+            // Randomly choose the dealer
             int dealerIndex = (int) (Math.random() * players.size());
+
+            // Calculate small and big blind indices based on the dealer index
             int smallBlindIndex = (dealerIndex + 1) % players.size();
             int bigBlindIndex = (dealerIndex + 2) % players.size();
 
-            // Set up the roles
+            // Reset the roles
+            for (Player player : players) {
+                player.setDealer(false);
+                player.setSmallBlind(false);
+                player.setBigBlind(false);
+            }
+
+            // Assign the new roles
             for (int i = 0; i < players.size(); i++) {
                 Player player = players.get(i);
-                player.setDealer(i == dealerIndex);
-                player.setSmallBlind(i == smallBlindIndex);
-                player.setBigBlind(i == bigBlindIndex);
-
+                if (i == dealerIndex) {
+                    player.setDealer(true);
+                } else if (i == smallBlindIndex) {
+                    player.setSmallBlind(true);
+                } else if (i == bigBlindIndex) {
+                    player.setBigBlind(true);
+                }
             }
         }
 
-        public Player getDealer(List<Player> players) {
+        public void rotateRoles(List<Player> players) {
+            // Validate the list of players
+            if (players == null || players.size() < 3 || players.size() > 10) {
+                throw new IllegalArgumentException("Invalid number of players. Must be between 3 and 10.");
+            }
+
+            int previousDealerIndex = -1;
+            int previousSmallBlindIndex = -1;
+            int previousBigBlindIndex = -1;
+
+            // Find the indices of the current roles
+            for (int i = 0; i < players.size(); i++) {
+                Player player = players.get(i);
+                if (player.isDealer()) {
+                    previousDealerIndex = i;
+                } else if (player.isSmallBlind()) {
+                    previousSmallBlindIndex = i;
+                } else if (player.isBigBlind()) {
+                    previousBigBlindIndex = i;
+                }
+            }
+
+            // Reset the roles
+            for (Player player : players) {
+                player.setDealer(false);
+                player.setSmallBlind(false);
+                player.setBigBlind(false);
+            }
+
+            // Rotate the roles
+            int newDealerIndex = (previousDealerIndex + 1) % players.size();
+            int newSmallBlindIndex = (previousSmallBlindIndex + 1) % players.size();
+            int newBigBlindIndex = (previousBigBlindIndex + 1) % players.size();
+
+            players.get(newDealerIndex).setDealer(true);
+            players.get(newSmallBlindIndex).setSmallBlind(true);
+            players.get(newBigBlindIndex).setBigBlind(true);
+        }
+
+    public Player getDealer(List<Player> players) {
             for (Player player : players) {
                 if (player.isDealer() == true) {
                     return player;

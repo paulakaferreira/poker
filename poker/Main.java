@@ -1,3 +1,4 @@
+package poker;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -5,7 +6,6 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import poker.CardGame;
 import poker.CardGame.*;
 import poker.Player;
 import poker.PokerGame;
@@ -136,7 +136,7 @@ public class Main {
         Card flop1 = deck.drawCard();
         Card flop2 = deck.drawCard();
         Card flop3 = deck.drawCard();
-        System.out.println("Flop Cards: " + flop1 + ", " + flop2 + ", " + flop3);
+        System.out.println("Flopped Cards: " + flop1 + ", " + flop2 + ", " + flop3);
 
         // Betting starts again but this time without small and big blinds
         for (Player player : players) {
@@ -146,11 +146,10 @@ public class Main {
                 String chosen_action = scanner.nextLine();
                 // Implement your logic for 'Call', 'Raise', and 'Fold'
             } else {
-                // AI logic for other players can go here
+                
             }
         }
 
-        // Code for any follow-up actions in the Flop round would go here
 
         System.out.println("----------------------------------");
         System.out.println("End of second round.");
@@ -176,7 +175,7 @@ public class Main {
                 String chosen_action = scanner.nextLine();
                 // Implement your logic for 'Call', 'Raise', and 'Fold'
             } else {
-                // AI logic for other players can go here
+                
             }
         }
 
@@ -199,12 +198,12 @@ public class Main {
                 System.out.print("Please choose your action: ");
                 String chosen_action = scanner.nextLine();
                 if (chosen_action.equals("1")) {
-                    int call = role.call(you, big_blind);  // Remarque: vous voudrez peut-être ajuster la valeur du big_blind
+                    int call = role.call(you, big_blind);  
                     pot += call;
                 }
-                // Ajoutez d'autres options ici comme "raise", "fold", etc.
+                
             } else {
-                int call = role.call(player, big_blind);  // Remarque: vous voudrez peut-être ajuster la valeur du big_blind
+                int call = role.call(player, big_blind);  
                 pot += call;
             }
         }
@@ -213,10 +212,7 @@ public class Main {
         System.out.println("End of fourth round.");
         System.out.println("Total amount on the table: " + pot);
         System.out.println("----------------------------------");
-        // reste révéler les cartes et déterminer le gagnant.
-
-
-        // Close the scanner to prevent resource leak
+ 
         scanner.close();
     }
 }
